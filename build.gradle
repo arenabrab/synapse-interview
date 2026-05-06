@@ -36,3 +36,17 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootBuildImage {
+    imageName = "ghcr.io/${System.getenv('IMAGE_OWNER') ?: 'local'}/synapse-interview:latest"
+    if (System.getenv('REGISTRY_TOKEN')) {
+        publish = true
+        docker {
+            publishRegistry {
+                username = System.getenv('REGISTRY_USERNAME') ?: ''
+                password = System.getenv('REGISTRY_TOKEN') ?: ''
+                url = 'https://ghcr.io'
+            }
+        }
+    }
+}
