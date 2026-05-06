@@ -21,7 +21,7 @@ curl http://localhost:8080/actuator/health
 
 ## API
 
-### `POST /api/orders/route`
+### `POST /api/route`
 
 Routes an order to one or more eligible suppliers using a greedy consolidation strategy
 (fewest suppliers needed to cover all items).
@@ -76,7 +76,7 @@ Routes an order to one or more eligible suppliers using a greedy consolidation s
 
 ```bash
 # ORD-001: wheelchair + oxygen, NYC zip
-curl -s -X POST http://localhost:8080/api/orders/route \
+curl -s -X POST http://localhost:8080/api/route \
   -H "Content-Type: application/json" \
   -d '{
     "order_id": "ORD-001",
@@ -90,7 +90,7 @@ curl -s -X POST http://localhost:8080/api/orders/route \
   }'
 
 # ORD-003: respiratory order, mail order allowed
-curl -s -X POST http://localhost:8080/api/orders/route \
+curl -s -X POST http://localhost:8080/api/route \
   -H "Content-Type: application/json" \
   -d '{
     "order_id": "ORD-003",

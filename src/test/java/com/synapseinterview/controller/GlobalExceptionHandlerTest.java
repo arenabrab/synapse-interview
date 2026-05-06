@@ -24,7 +24,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void missingBody_returns400() throws Exception {
-        mockMvc.perform(post("/api/orders/route")
+        mockMvc.perform(post("/api/route")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.feasible").value(false))
@@ -33,7 +33,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void malformedJson_returns400() throws Exception {
-        mockMvc.perform(post("/api/orders/route")
+        mockMvc.perform(post("/api/route")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ not valid json }"))
                 .andExpect(status().isBadRequest())
@@ -43,7 +43,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void wrongContentType_returns415() throws Exception {
-        mockMvc.perform(post("/api/orders/route")
+        mockMvc.perform(post("/api/route")
                         .contentType(MediaType.TEXT_PLAIN)
                         .content("{}"))
                 .andExpect(status().isUnsupportedMediaType())

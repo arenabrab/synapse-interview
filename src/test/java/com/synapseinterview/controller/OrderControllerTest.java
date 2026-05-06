@@ -40,7 +40,7 @@ class OrderControllerTest {
                 "standard", null
         );
 
-        mockMvc.perform(post("/api/orders/route")
+        mockMvc.perform(post("/api/route")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -68,7 +68,7 @@ class OrderControllerTest {
                 "standard", null
         );
 
-        mockMvc.perform(post("/api/orders/route")
+        mockMvc.perform(post("/api/route")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
