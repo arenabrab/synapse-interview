@@ -6,11 +6,11 @@ based on product category, geographic ZIP coverage, and mail-order eligibility.
 ## Running with Docker
 
 ```bash
-docker pull ghcr.io/YOUR_GITHUB_USERNAME/synapse-interview:latest
+docker pull ghcr.io/arenabrab/synapse-interview:latest
 docker run -p 8080:8080 ghcr.io/YOUR_GITHUB_USERNAME/synapse-interview:latest
 ```
 
-Replace `YOUR_GITHUB_USERNAME` with the repository owner. The image is built and pushed
+The image is built and pushed
 automatically on every push to `main` via GitHub Actions.
 
 Verify the container started:
