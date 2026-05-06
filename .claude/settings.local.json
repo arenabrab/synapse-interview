@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(cd:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(cd /c/Users/andre/Desktop/synapse-interview && ./gradlew test --tests \"com.synapseinterview.util.ZipMatcherTest\" 2>&1)",
+      "Bash(grep:*)",
+      "Bash(cd /c/Users/andre/Desktop/synapse-interview && ./gradlew cleanTest test --tests \"com.synapseinterview.util.ZipMatcherTest\" 2>&1)",
+      "Bash(python3:*)",
+      "Bash(printf %s\\\\n:*)",
+      "Bash(perl:*)",
+      "Bash(cd /c/Users/andre/Desktop/synapse-interview && ./gradlew test --tests \"com.synapseinterview.service.OrderRoutingServiceTest\" 2>&1)",
+      "Bash(node:*)",
+      "Bash(cd /c/Users/andre/Desktop/synapse-interview && ./gradlew compileJava 2>&1)",
+      "Bash(ls:*)",
+      "Bash(grep illegal:*)",
+      "Bash(git:*)",
+      "Bash(xxd:*)",
+      "Bash(printf:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(cd /c/Users/andre/Desktop/synapse-interview && ./gradlew clean test --tests \"com.synapseinterview.service.OrderRoutingServiceTest\" 2>&1)",
+      "Bash(jar tf:*)",
+      "Bash(find:*)",
+      "Bash(cd /c/Users/andre/Desktop/synapse-interview && ./gradlew test --tests OrderControllerTest 2>&1)"
+    ]
+  }
+}

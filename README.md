@@ -13,6 +13,12 @@ docker run -p 8080:8080 ghcr.io/YOUR_GITHUB_USERNAME/synapse-interview:latest
 Replace `YOUR_GITHUB_USERNAME` with the repository owner. The image is built and pushed
 automatically on every push to `main` via GitHub Actions.
 
+Verify the container started:
+```bash
+curl http://localhost:8080/actuator/health
+# {"status":"UP"}
+```
+
 ## API
 
 ### `POST /api/orders/route`

@@ -84,7 +84,7 @@ with greedy set-cover consolidation, (5) controller + MockMvc tests,
 ---
 
 
-## 5. Task 4 � Request/Response models and OrderRoutingService
+## 5. Task 4 � Request/Response models and OrderRoutingService
 
 **Context:** Models (Product, ZipRange, Supplier), ZipMatcher, repositories,
 and DataLoader were already in place. Needed to add the five request/response
@@ -118,5 +118,36 @@ routedItemContainsAllFields). BUILD SUCCESSFUL.
 
 ---
 
-## 6. [next significant prompt]
-...
+## 6. Implementation execution and Spring Boot 4.x discoveries
+
+**Context:** Executing the six-task implementation plan using Claude Code's
+subagent-driven development workflow (fresh subagent per task, spec + quality
+review after each).
+
+**Prompt (summary):** Dispatched subagents to implement each task in order,
+reviewed outputs between tasks, and ran a final holistic code review across
+the full implementation.
+
+**What happened / lessons learned:**
+- Spring Boot 4.x relocated several test APIs compared to 3.x. The controller
+  test required `import tools.jackson.databind.ObjectMapper` (Jackson 3.x
+  namespace) and `import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest`
+  rather than the Spring Boot 3.x paths. The final code reviewer (trained on 3.x
+  knowledge) initially flagged these as wrong; the passing test suite confirmed
+  they are correct for this environment.
+- `gradlew` was committed with mode `100644` (not executable) because the project
+  was initialized on Windows. GitHub Actions runs on Linux and requires `100755`.
+  Fix: `git update-index --chmod=+x gradlew` before pushing.
+- After the first GHCR push, the package defaults to private. Must manually set
+  visibility to Public in GitHub → Packages → Package Settings so the hiring
+  team can `docker pull` without authenticating.
+- No repository secrets need to be configured — `GITHUB_TOKEN` is provisioned
+  automatically by GitHub Actions; the `permissions: packages: write` block in
+  the workflow is sufficient.
+
+**Outcome:** 21 tests passing across 4 suites (ZipMatcherTest × 8,
+OrderRoutingServiceTest × 10, OrderControllerTest × 2,
+SynapseInterviewApplicationTests × 1). Full implementation committed across
+6 commits. README, GitHub Actions workflow, and AI_PROMPTS.md all complete.
+
+---
