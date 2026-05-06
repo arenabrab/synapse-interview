@@ -26,4 +26,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body(RoutingResponse.failure("Content-Type must be application/json."));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RoutingResponse> handleUnexpected(Exception ex) {
+        log.error("Unexpected error processing request", ex);
+        return ResponseEntity.internalServerError()
+                .body(RoutingResponse.failure("An unexpected error occurred."));
+    }
 }
