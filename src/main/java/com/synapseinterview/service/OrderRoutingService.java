@@ -4,26 +4,27 @@ import com.synapseinterview.model.*;
 import com.synapseinterview.repository.ProductRepository;
 import com.synapseinterview.repository.SupplierRepository;
 import com.synapseinterview.util.ZipMatcher;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class OrderRoutingService {
 
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
 
-    public OrderRoutingService(ProductRepository productRepository,
-                               SupplierRepository supplierRepository) {
-        this.productRepository = productRepository;
-        this.supplierRepository = supplierRepository;
-    }
-
     public RoutingResponse route(OrderRequest request) {
+        log.debug("Routing order: {}", request.orderId());
+
         var validationErrors = validate(request);
         if (!validationErrors.isEmpty()) {
+            log.info("Order {} infeasible: {} validation error(s)", request.orderId(), validationErrors.size());
             return RoutingResponse.failure(validationErrors);
         }
 
@@ -32,11 +33,13 @@ public class OrderRoutingService {
         for (var item : request.items()) {
             var product = productRepository.findById(item.productCode());
             if (product.isEmpty()) {
+                log.info("Order {} infeasible: unknown product {}", request.orderId(), item.productCode());
                 return RoutingResponse.failure("Unknown product code: " + item.productCode());
             }
             var eligible = supplierRepository.findEligible(
                     product.get().category(), request.customerZip(), request.mailOrder());
             if (eligible.isEmpty()) {
+                log.info("Order {} infeasible: no eligible supplier for {}", request.orderId(), item.productCode());
                 return RoutingResponse.failure(
                         "No eligible supplier for product: " + item.productCode());
             }
@@ -48,6 +51,7 @@ public class OrderRoutingService {
                 .collect(Collectors.toMap(OrderItem::productCode, i -> i));
 
         var routing = greedyRoute(eligibleByProduct, productCache, itemsByCode, request.customerZip());
+        log.info("Order {} routed to {} supplier(s)", request.orderId(), routing.size());
         return RoutingResponse.success(routing);
     }
 
@@ -102,7 +106,7 @@ public class OrderRoutingService {
 
             assignments.add(new SupplierAssignment(
                     best.supplierId(), best.supplierName(), routedItems));
-            remaining.removeAll(coverage.get(best));
+            coverage.get(best).forEach(remaining::remove);
         }
 
         return assignments;

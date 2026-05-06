@@ -5,6 +5,7 @@ import com.synapseinterview.model.Supplier;
 import com.synapseinterview.repository.ProductRepository;
 import com.synapseinterview.repository.SupplierRepository;
 import com.synapseinterview.util.ZipMatcher;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class DataLoader implements ApplicationRunner {
 
@@ -55,6 +57,7 @@ public class DataLoader implements ApplicationRunner {
                     .map(r -> new Product(r.get("product_code"), r.get("product_name"), r.get("category")))
                     .forEach(productRepository::save);
         }
+        log.info("Loaded {} products", productRepository.findAll().size());
     }
 
     private void loadSuppliers() throws IOException {
@@ -69,6 +72,7 @@ public class DataLoader implements ApplicationRunner {
                     .map(this::recordToSupplier)
                     .forEach(supplierRepository::save);
         }
+        log.info("Loaded {} suppliers", supplierRepository.findAll().size());
     }
 
     private Supplier recordToSupplier(CSVRecord r) {

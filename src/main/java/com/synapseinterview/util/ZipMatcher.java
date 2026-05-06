@@ -1,20 +1,20 @@
 package com.synapseinterview.util;
 
 import com.synapseinterview.model.ZipRange;
+import lombok.experimental.UtilityClass;
 
 import java.util.Arrays;
 import java.util.List;
 
-public final class ZipMatcher {
-
-    private ZipMatcher() {}
+@UtilityClass
+public class ZipMatcher {
 
     /**
      * Parses a raw service_zips CSV field into a list of ZipRange.
      * Supports discrete zips ("11410, 11419"), single ranges ("11232-11305"),
      * and multiple ranges ("2164-2213, 2143-2193").
      */
-    public static List<ZipRange> parse(String rawServiceZips) {
+    public List<ZipRange> parse(String rawServiceZips) {
         return Arrays.stream(rawServiceZips.split(","))
                 .map(String::trim)
                 .map(ZipMatcher::parseToken)
@@ -36,7 +36,7 @@ public final class ZipMatcher {
      * Returns true if customerZip (parsed as integer) falls within any of the ranges.
      * Integer comparison handles leading-zero-stripped CSV values correctly.
      */
-    public static boolean matches(List<ZipRange> ranges, String customerZip) {
+    public boolean matches(List<ZipRange> ranges, String customerZip) {
         var zipInt = Integer.parseInt(customerZip);
         return ranges.stream().anyMatch(r -> r.contains(zipInt));
     }
