@@ -7,7 +7,7 @@ based on product category, geographic ZIP coverage, and mail-order eligibility.
 
 ```bash
 docker pull ghcr.io/arenabrab/synapse-interview:latest
-docker run -p 8080:8080 ghcr.io/YOUR_GITHUB_USERNAME/synapse-interview:latest
+docker run -p 8080:8080 ghcr.io/arenabrab/synapse-interview:latest
 ```
 
 The image is built and pushed

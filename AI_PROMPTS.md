@@ -84,7 +84,7 @@ with greedy set-cover consolidation, (5) controller + MockMvc tests,
 ---
 
 
-## 5. Task 4 � Request/Response models and OrderRoutingService
+## 5. Task 4 Request/Response models and OrderRoutingService
 
 **Context:** Models (Product, ZipRange, Supplier), ZipMatcher, repositories,
 and DataLoader were already in place. Needed to add the five request/response
