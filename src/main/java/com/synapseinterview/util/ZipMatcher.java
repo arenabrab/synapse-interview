@@ -21,7 +21,7 @@ public class ZipMatcher {
                 .toList();
     }
 
-    private static ZipRange parseToken(String token) {
+    private ZipRange parseToken(String token) {
         if (token.contains("-")) {
             var parts = token.split("-", 2);
             var min = Integer.parseInt(parts[0].trim());
