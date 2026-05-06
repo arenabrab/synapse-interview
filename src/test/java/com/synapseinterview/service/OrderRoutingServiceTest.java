@@ -160,4 +160,45 @@ class OrderRoutingServiceTest {
         assertEquals("widgets", item.category());
         assertEquals("local", item.fulfillmentMode());
     }
+
+    @Test
+    void higherRatedSupplierPreferredOnTie() {
+        var lowRated = new Supplier("SUP-LOW", "Low Co",
+                ZipMatcher.parse("10000-10099"), Set.of("widgets"), 7, false);
+        var highRated = new Supplier("SUP-HIGH", "High Co",
+                ZipMatcher.parse("10000-10099"), Set.of("widgets"), 9, false);
+
+        when(productRepository.findById("P-001")).thenReturn(Optional.of(widgetProduct));
+        when(supplierRepository.findEligible("widgets", "10050", false))
+                .thenReturn(List.of(lowRated, highRated));
+
+        var request = new OrderRequest("ORD-X", "10050", false,
+                List.of(new OrderItem("P-001", 1)), "standard", null);
+        var response = service.route(request);
+
+        assertTrue(response.feasible());
+        assertEquals("SUP-HIGH", response.routing().get(0).supplierId());
+    }
+
+    @Test
+    void localSupplierPreferredOverMailOrderOnTie() {
+        // Both suppliers cover the same item with equal scores —
+        // local zip match should be the tiebreaker
+        var mailEqual = new Supplier("SUP-MAIL-EQ", "Mail Equal Co",
+                ZipMatcher.parse("99999"), Set.of("widgets"), 8, true);
+        var localEqual = new Supplier("SUP-LOCAL-EQ", "Local Equal Co",
+                ZipMatcher.parse("10000-10099"), Set.of("widgets"), 8, false);
+
+        when(productRepository.findById("P-001")).thenReturn(Optional.of(widgetProduct));
+        when(supplierRepository.findEligible("widgets", "10050", false))
+                .thenReturn(List.of(mailEqual, localEqual));
+
+        var request = new OrderRequest("ORD-X", "10050", false,
+                List.of(new OrderItem("P-001", 1)), "standard", null);
+        var response = service.route(request);
+
+        assertTrue(response.feasible());
+        assertEquals("SUP-LOCAL-EQ", response.routing().get(0).supplierId());
+        assertEquals("local", response.routing().get(0).items().get(0).fulfillmentMode());
+    }
 }

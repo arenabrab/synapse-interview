@@ -88,7 +88,10 @@ public class OrderRoutingService {
             }
 
             var best = coverage.entrySet().stream()
-                    .max(Comparator.comparingInt(e -> e.getValue().size()))
+                    .max(Comparator.comparingInt((Map.Entry<Supplier, List<String>> e) -> e.getValue().size())
+                            .thenComparingInt(e -> e.getKey().satisfactionScore() != null
+                                    ? e.getKey().satisfactionScore() : 0)
+                            .thenComparingInt(e -> ZipMatcher.matches(e.getKey().serviceZips(), customerZip) ? 1 : 0))
                     .map(Map.Entry::getKey)
                     .orElseThrow();
 
