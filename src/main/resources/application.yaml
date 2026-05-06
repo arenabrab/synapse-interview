@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: synapse-interview
+  jackson:
+    default-property-inclusion: non_null
+
+app:
+  data:
+    products-csv: classpath:products.csv
+    suppliers-csv: classpath:suppliers.csv
