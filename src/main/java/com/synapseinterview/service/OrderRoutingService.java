@@ -22,42 +22,37 @@ public class OrderRoutingService {
     }
 
     public RoutingResponse route(OrderRequest request) {
-        List<String> validationErrors = validate(request);
+        var validationErrors = validate(request);
         if (!validationErrors.isEmpty()) {
             return RoutingResponse.failure(validationErrors);
         }
 
-        Map<String, List<Supplier>> eligibleByProduct = new LinkedHashMap<>();
-        for (OrderItem item : request.items()) {
-            Optional<Product> product = productRepository.findById(item.productCode());
+        var eligibleByProduct = new LinkedHashMap<String, List<Supplier>>();
+        var productCache = new LinkedHashMap<String, Product>();
+        for (var item : request.items()) {
+            var product = productRepository.findById(item.productCode());
             if (product.isEmpty()) {
                 return RoutingResponse.failure("Unknown product code: " + item.productCode());
             }
-            List<Supplier> eligible = supplierRepository.findEligible(
+            var eligible = supplierRepository.findEligible(
                     product.get().category(), request.customerZip(), request.mailOrder());
             if (eligible.isEmpty()) {
                 return RoutingResponse.failure(
                         "No eligible supplier for product: " + item.productCode());
             }
             eligibleByProduct.put(item.productCode(), eligible);
+            productCache.put(item.productCode(), product.get());
         }
 
-        Map<String, Product> productCache = request.items().stream()
-                .collect(Collectors.toMap(
-                        OrderItem::productCode,
-                        i -> productRepository.findById(i.productCode()).orElseThrow()
-                ));
-        Map<String, OrderItem> itemsByCode = request.items().stream()
+        var itemsByCode = request.items().stream()
                 .collect(Collectors.toMap(OrderItem::productCode, i -> i));
 
-        List<SupplierAssignment> routing = greedyRoute(
-                eligibleByProduct, productCache, itemsByCode, request.customerZip());
-
+        var routing = greedyRoute(eligibleByProduct, productCache, itemsByCode, request.customerZip());
         return RoutingResponse.success(routing);
     }
 
     private List<String> validate(OrderRequest request) {
-        List<String> errors = new ArrayList<>();
+        var errors = new ArrayList<String>();
         if (request.items() == null || request.items().isEmpty()) {
             errors.add("Order must include at least one line item.");
         }
@@ -77,26 +72,26 @@ public class OrderRoutingService {
             Map<String, OrderItem> itemsByCode,
             String customerZip) {
 
-        Set<String> remaining = new LinkedHashSet<>(eligibleByProduct.keySet());
-        List<SupplierAssignment> assignments = new ArrayList<>();
+        var remaining = new LinkedHashSet<>(eligibleByProduct.keySet());
+        var assignments = new ArrayList<SupplierAssignment>();
 
         while (!remaining.isEmpty()) {
-            Map<Supplier, List<String>> coverage = new LinkedHashMap<>();
-            for (String productCode : remaining) {
-                for (Supplier supplier : eligibleByProduct.get(productCode)) {
+            var coverage = new LinkedHashMap<Supplier, List<String>>();
+            for (var productCode : remaining) {
+                for (var supplier : eligibleByProduct.get(productCode)) {
                     coverage.computeIfAbsent(supplier, k -> new ArrayList<>()).add(productCode);
                 }
             }
 
-            Supplier best = coverage.entrySet().stream()
+            var best = coverage.entrySet().stream()
                     .max(Comparator.comparingInt(e -> e.getValue().size()))
                     .map(Map.Entry::getKey)
                     .orElseThrow();
 
-            String fulfillmentMode = ZipMatcher.matches(best.serviceZips(), customerZip)
+            var fulfillmentMode = ZipMatcher.matches(best.serviceZips(), customerZip)
                     ? "local" : "mail_order";
 
-            List<RoutedItem> routedItems = coverage.get(best).stream()
+            var routedItems = coverage.get(best).stream()
                     .map(code -> new RoutedItem(
                             code,
                             itemsByCode.get(code).quantity(),
