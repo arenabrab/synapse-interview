@@ -122,4 +122,6 @@ at startup. No database or external services required.
 
 **Routing logic:** For each item, the service finds suppliers that carry the product's category
 and serve the customer ZIP (or can mail-order if requested). A greedy set-cover pass then
-assigns items to the fewest suppliers possible.
+assigns items to the fewest suppliers possible. When coverage is equal, the supplier with the
+higher satisfaction score is preferred; local fulfillment is preferred over mail-order when
+scores are also equal.
